@@ -33,8 +33,8 @@
     let connectButton = document.querySelector('#connect');
 
     t.decorate(document.querySelector('#terminal'));
-    t.setWidth(80);
-    t.setHeight(24);
+    t.setWidth(60);
+    t.setHeight(6);
     t.installKeyboard();
 
     function connect() {
@@ -46,6 +46,17 @@
         port.onReceive = data => {
           let textDecoder = new TextDecoder();
           t.io.print(textDecoder.decode(data));
+          try {
+            var obj = eval("null ?? {" + textDecoder.decode(data)+ "}")
+            console.log(obj);
+            var date = new Date();
+            Object.keys(obj).forEach(key => {
+              add(key, obj[key], date);
+            });
+            chart.update();
+          } catch (error) {
+            console.log(error);
+          }
         }
         port.onReceiveError = error => {
           t.io.println('Receive error: ' + error);
